@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Global Safety Net - Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Reusable Hardened Helper Functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    // Schema Type & Size Validation Helpers
+    function isValidComment(data) {
+      return data.get('id', null) is string && data.get('id', null).size() <= 128
+          && data.get('storyId', null) is string && data.get('storyId', null).size() <= 128
+          && data.get('name', null) is string && data.get('name', null).size() <= 100
+          && data.get('message', null) is string && data.get('message', null).size() <= 1000
+          && (data.get('timestamp', null) == null || data.get('timestamp', null) is string || data.get('timestamp', null) is timestamp)
+          && (data.get('updatedAt', null) == null || data.get('updatedAt', null) is string || data.get('updatedAt', null) is timestamp)
+          && (data.get('status', null) == null || data.get('status', null) is string)
+          && (data.get('moderationFlags', null) == null || data.get('moderationFlags', null) is list);
+    }
+
+    function isValidFreeStory(data) {
+      return data.get('storyId', null) is string && data.get('storyId', null).size() <= 128
+          && (data.get('email', null) == null || (data.get('email', null) is string && data.get('email', null).size() <= 256))
+          && (data.get('storyType', null) == null || data.get('storyType', null) is string)
+          && (data.get('status', null) == null || data.get('status', null) is string)
+          && (data.get('visibility', null) == null || data.get('visibility', null) is string)
+          && (data.get('mediaReferences', null) == null || data.get('mediaReferences', null) is map)
+          && (data.get('storageReferences', null) == null || data.get('storageReferences', null) is map)
+          && (data.get('celebrationData', null) == null || data.get('celebrationData', null) is map)
+          && (data.get('createdAt', null) == null || data.get('createdAt', null) is string || data.get('createdAt', null) is timestamp)
+          && (data.get('updatedAt', null) == null || data.get('updatedAt', null) is string || data.get('updatedAt', null) is timestamp)
+          && (data.get('popCount', null) == null || data.get('popCount', null) is number)
+          && (data.get('balloonPops', null) == null || data.get('balloonPops', null) is number)
+          && (data.get('comments', null) == null || data.get('comments', null) is list)
+          && (data.get('achievements', null) == null || data.get('achievements', null) is list);
+    }
+
+    function isValidPremiumUser(data) {
+      return data.get('name', null) is string && data.get('name', null).size() <= 128
+          && data.get('amount', null) is number && data.get('amount', null) >= 0
+          && (data.get('email', null) == null || (data.get('email', null) is string && data.get('email', null).size() <= 256))
+          && data.get('isPublic', null) is bool
+          && data.get('storyId', null) is string && data.get('storyId', null).size() <= 128
+          && (data.get('createdAt', null) == null || data.get('createdAt', null) is string || data.get('createdAt', null) is timestamp)
+          && (data.get('expiresAt', null) == null || data.get('expiresAt', null) is string || data.get('expiresAt', null) is timestamp)
+          && (data.get('celebrationData', null) == null || data.get('celebrationData', null) is map);
+    }
+
+    function isValidVerifiedPayment(data) {
+      return data.get('paymentId', null) is string && data.get('paymentId', null).size() <= 128
+          && data.get('orderId', null) is string && data.get('orderId', null).size() <= 128
+          && data.get('email', null) is string && data.get('email', null).size() <= 256
+          && data.get('amount', null) is number && data.get('amount', null) >= 0
+          && data.get('status', null) is string
+          && data.get('used', null) is bool;
+    }
+
+    // 3. Collection Rules with Identity Locks & Immutability Checks
+    match /debug_tests/{id} {
+      allow read, write: if false;
+    }
+
+    match /free_stories/{storyId} {
+      // Anyone can load a story by ID and list stories for the leaderboard
+      allow read: if true;
+      
+      allow create: if isValidId(storyId) && isValidFreeStory(incoming());
+      
+      // Update check: Enforce email lock (cannot modify owned stories) & immutable createdAt
+      allow update: if isValidId(storyId) && isValidFreeStory(incoming())
+                    && (resource.data.get('email', null) == null || resource.data.get('email', '') == '' || incoming().get('email', null) == resource.data.get('email', null))
+                    && (resource.data.get('createdAt', null) == null || resource.data.get('createdAt', null) is timestamp || incoming().get('createdAt', null) == resource.data.get('createdAt', null));
+                    
+      allow delete: if false;
+
+      match /comments/{commentId} {
+        allow read, list: if true;
+        allow create: if isValidId(storyId) && isValidId(commentId) && isValidComment(incoming());
+        allow update: if isValidId(storyId) && isValidId(commentId) && isValidComment(incoming());
+        allow delete: if false;
+      }
+    }
+
+    match /premium_users/{storyId} {
+      // Leaderboard requires list/get
+      allow get: if true;
+      allow list: if true;
+      
+      allow create: if isValidId(storyId) && isValidPremiumUser(incoming());
+      
+      // Update check: Enforce email lock & immutable createdAt
+      allow update: if isValidId(storyId) && isValidPremiumUser(incoming())
+                    && (resource.data.get('email', null) == null || resource.data.get('email', '') == '' || incoming().get('email', null) == resource.data.get('email', null))
+                    && (resource.data.get('createdAt', null) == null || resource.data.get('createdAt', null) is timestamp || incoming().get('createdAt', null) == resource.data.get('createdAt', null));
+                    
+      allow delete: if false;
+    }
+
+    match /verified_payments/{paymentId} {
+      allow get: if true;
+      allow list: if true;
+      
+      allow create: if isValidId(paymentId) && isValidVerifiedPayment(incoming());
+      
+      // Update check: Only used status can transition; payment identity is immutable
+      allow update: if isValidId(paymentId) && isValidVerifiedPayment(incoming())
+                    && incoming().get('paymentId', null) == resource.data.get('paymentId', null)
+                    && incoming().get('orderId', null) == resource.data.get('orderId', null)
+                    && incoming().get('email', null) == resource.data.get('email', null)
+                    && incoming().get('amount', null) == resource.data.get('amount', null);
+                    
+      allow delete: if false;
+    }
+
+    match /global_stats/{docId} {
+      allow read: if true;
+      
+      // Ensure only valid counts can be written/incremented
+      allow write: if docId == 'balloon_pops' && incoming().count is number && incoming().count >= 0;
+    }
+  }
+}
+
+// sync

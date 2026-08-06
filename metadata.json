@@ -1,0 +1,7 @@
+{
+  "name": "Celebration App",
+  "description": "Create royal and memorable celebrations, stories, and posters for your loved ones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+ 

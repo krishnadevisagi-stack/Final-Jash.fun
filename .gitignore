@@ -1,0 +1,19 @@
+node_modules
+.next/
+
+# Environment files
+.env
+.env*.local
+.env.production
+.env.development
+
+# Local fallback data & storage
+payments_fallback.json
+leaderboard_fallback.json
+.local-gcs-fallback/
+debug_output.json
+
+# Keys and credentials
+*.pem
+*.key
+firebase-applet-config.json

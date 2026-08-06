@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "PremiumUser": {
+      "title": "PremiumUser",
+      "description": "Represents a premium user registration and celebration page metadata.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "amount": { "type": "number" },
+        "email": { "type": "string" },
+        "isPublic": { "type": "boolean" },
+        "storyId": { "type": "string" },
+        "celebrationData": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "emailStatus": { "type": "string", "enum": ["Pending", "Sent", "Failed"] },
+        "emailFailureReason": { "type": "string" }
+      },
+      "required": ["name", "amount", "isPublic", "storyId", "createdAt", "expiresAt"]
+    },
+    "VerifiedPayment": {
+      "title": "VerifiedPayment",
+      "description": "Represents a verified contribution payment from Razorpay Standard Checkout.",
+      "type": "object",
+      "properties": {
+        "paymentId": { "type": "string" },
+        "orderId": { "type": "string" },
+        "email": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string" },
+        "used": { "type": "boolean" },
+        "usedByStoryId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paymentId", "orderId", "email", "amount", "status", "used"]
+    },
+    "FreeStory": {
+      "title": "FreeStory",
+      "description": "Represents a free celebration story metadata, balloon popping stats, achievements, comments, and media storage references.",
+      "type": "object",
+      "properties": {
+        "storyId": { "type": "string" },
+        "email": { "type": "string" },
+        "storyType": { "type": "string" },
+        "status": { "type": "string" },
+        "visibility": { "type": "string" },
+        "mediaReferences": { "type": "object" },
+        "storageReferences": { "type": "object" },
+        "celebrationData": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "popCount": { "type": "number" },
+        "comments": { "type": "array" },
+        "achievements": { "type": "array" }
+      },
+      "required": ["storyId", "createdAt", "updatedAt"]
+    },
+    "FreeStoryComment": {
+      "title": "FreeStoryComment",
+      "description": "Represents a separate comment document belonging to a specific free story.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "storyId": { "type": "string" },
+        "name": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string" },
+        "moderationFlags": { "type": "array" }
+      },
+      "required": ["id", "storyId", "name", "message", "timestamp", "updatedAt"]
+    },
+    "GlobalStats": {
+      "title": "GlobalStats",
+      "description": "Represents global statistics such as overall balloon pops count.",
+      "type": "object",
+      "properties": {
+        "count": { "type": "number" }
+      },
+      "required": ["count"]
+    }
+  },
+  "firestore": {
+    "premium_users/{storyId}": {
+      "schema": "PremiumUser",
+      "description": "Collection of premium users indexed by their celebration storyId."
+    },
+    "verified_payments/{paymentId}": {
+      "schema": "VerifiedPayment",
+      "description": "Collection of verified payment records from Razorpay."
+    },
+    "free_stories/{storyId}": {
+      "schema": "FreeStory",
+      "description": "Collection of free celebration stories indexed by storyId."
+    },
+    "free_stories/{storyId}/comments/{commentId}": {
+      "schema": "FreeStoryComment",
+      "description": "Subcollection of comments for a specific free story."
+    },
+    "global_stats/{docId}": {
+      "schema": "GlobalStats",
+      "description": "Collection of global stats document, e.g., balloon_pops."
+    }
+  }
+}
+ 

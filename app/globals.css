@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+--royal-base: #2A0A0A;
+--royal-maroon: #3D1010;
+--royal-gold: #d4af37;
+--text-primary: #fae8e8;
+}
+
+html, body {
+margin: 0;
+padding: 0;
+color: var(--text-primary);
+font-family: sans-serif;
+width: 100vw;
+height: 100dvh;
+overflow-x: hidden;
+position: fixed;
+inset: 0;
+}
+
+/* --- TASK 8: DISABLE TEXT SELECTION GLOBALLY --- */
+* {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+-webkit-tap-highlight-color: transparent;
+}
+
+/* TASK 8: ALLOW SELECTION IN INPUT FIELDS AND TEXTAREAS */
+input,
+textarea,
+[contenteditable="true"] {
+-webkit-user-select: text !important;
+-moz-user-select: text !important;
+-ms-user-select: text !important;
+user-select: text !important;
+}
+
+/* TASK 8: PREVENT IMAGE DRAGGING */
+img {
+-webkit-user-drag: none;
+-khtml-user-drag: none;
+-moz-user-drag: none;
+-o-user-drag: none;
+user-drag: none;
+}
+
+/* --- UTILITIES --- */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.glass-panel {
+background: rgba(61, 16, 16, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(212, 175, 55, 0.2);
+box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.text-gold { color: var(--royal-gold); }
+.border-gold { border-color: var(--royal-gold); }
+
+/* --- SHIMMER EFFECT --- */
+.text-shimmer {
+background: linear-gradient(to right, #d4af37 20%, #fff0b3 50%, #d4af37 80%);
+background-size: 200% auto;
+color: transparent;
+background-clip: text;
+-webkit-background-clip: text;
+animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+to { background-position: 200% center; }
+}
+
+.animate-fade-in-up {
+animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== FIX 1: CELEBRATION PILL LABEL ========== */
+.celebration-pill-label {
+display: inline-block;
+background-color: #FFD700;
+color: #2A0A0A;
+padding: 8px 16px;
+border-radius: 20px;
+font-size: 14px;
+font-weight: 600;
+text-align: center;
+}
+
+/* sync */
