@@ -1209,9 +1209,65 @@ function CreateCelebrationContent() {
     }
   };
 
+  // ── UPLOAD SIZE VALIDATION CONSTANTS ──────────────────────────────────────────
+  // Chosen to optimize GCS Free Tier quota, prevent serverless body size payload
+  // timeouts, and guarantee smooth high-speed uploads on mobile networks.
+  const MAX_SINGLE_IMAGE_SIZE_MB = 10;    // 10 MB limit per individual photo
+  const MAX_SINGLE_AUDIO_SIZE_MB = 15;    // 15 MB limit for background music track
+  const MAX_COMBINED_UPLOAD_SIZE_MB = 25;  // 25 MB total combined media upload payload
+
+  /**
+   * Validates individual and combined upload file sizes BEFORE upload processing begins.
+   * Returns true if valid, or false if validation failed (and displays user notification).
+   */
+  const validateUploadSizes = (
+    newFiles: File[],
+    type: 'PHOTO' | 'MUSIC' | 'CREATOR' | 'HERO' | 'GALLERY' | 'SECRET'
+  ): boolean => {
+    if (!newFiles || newFiles.length === 0) return true;
+
+    // 1. Individual File Size Validation
+    for (const file of newFiles) {
+      const fileSizeMB = file.size / (1024 * 1024);
+      const isAudio = type === 'MUSIC' || file.type.startsWith('audio/');
+      const maxSingleSize = isAudio ? MAX_SINGLE_AUDIO_SIZE_MB : MAX_SINGLE_IMAGE_SIZE_MB;
+
+      if (fileSizeMB > maxSingleSize) {
+        alert(
+          `Upload Rejected: "${file.name}" is too large.\n\n` +
+          `• Selected File Size: ${fileSizeMB.toFixed(1)} MB\n` +
+          `• Maximum Allowed Limit: ${maxSingleSize} MB\n\n` +
+          `Please select a lighter ${isAudio ? 'audio file' : 'image'} (under ${maxSingleSize} MB).`
+        );
+        return false;
+      }
+    }
+
+    // 2. Combined Batch Payload Validation
+    const newBatchSizeMB = newFiles.reduce((sum, f) => sum + (f.size / (1024 * 1024)), 0);
+
+    if (newBatchSizeMB > MAX_COMBINED_UPLOAD_SIZE_MB) {
+      alert(
+        `Upload Rejected: Total upload size exceeds supported limit.\n\n` +
+        `• Current Batch Total: ${newBatchSizeMB.toFixed(1)} MB\n` +
+        `• Maximum Allowed Combined Total: ${MAX_COMBINED_UPLOAD_SIZE_MB} MB\n\n` +
+        `Please select lighter files or upload fewer files at once.`
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>, type: 'PHOTO' | 'MUSIC' | 'CREATOR') => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+
+    // Execute upload size validation before upload processing starts
+    if (!validateUploadSizes(Array.from(files), type)) {
+      if (e.target) e.target.value = '';
+      return;
+    }
 
     const currentStoryId = getActiveStoryId();
     const currentEmail = formData.email || formData.premiumEmail || '';
@@ -1302,6 +1358,10 @@ function CreateCelebrationContent() {
   const handleHeroUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+    if (!validateUploadSizes(Array.from(files), 'HERO')) {
+      if (e.target) e.target.value = '';
+      return;
+    }
     const currentStoryId = getActiveStoryId();
     const currentEmail = formData.email || formData.premiumEmail || '';
     try {
@@ -1320,6 +1380,10 @@ function CreateCelebrationContent() {
   const handleGalleryUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+    if (!validateUploadSizes(Array.from(files), 'GALLERY')) {
+      if (e.target) e.target.value = '';
+      return;
+    }
     const remainingSlots = 6 - formData.galleryPhotos.length;
     if (remainingSlots <= 0) { alert('Maximum 6 images allowed'); return; }
     const currentStoryId = getActiveStoryId();
@@ -1385,6 +1449,10 @@ function CreateCelebrationContent() {
   const handleSecretImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+    if (!validateUploadSizes(Array.from(files), 'SECRET')) {
+      if (e.target) e.target.value = '';
+      return;
+    }
     const currentStoryId = getActiveStoryId();
     const currentEmail = formData.email || formData.premiumEmail || '';
     try {
@@ -1696,9 +1764,10 @@ function CreateCelebrationContent() {
                   {formData.heroImage ? (
                     <img src={formData.heroImage} className="w-full h-full object-cover" alt="Hero" />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                       <Camera size={40} className="text-[#d4af37]" />
-                      <span className="text-white/60 text-sm">Tap to upload hero photo</span>
+                      <span className="text-white/60 text-sm font-medium">Tap to upload hero photo</span>
+                      <span className="text-[#d4af37]/70 text-xs font-mono">Max 10MB (JPG, PNG, WEBP)</span>
                     </div>
                   )}
                   <input type="file" accept="image/*" hidden onChange={handleHeroUpload} />
@@ -1789,9 +1858,10 @@ function CreateCelebrationContent() {
                     {formData.secretImage ? (
                       <img src={formData.secretImage} className="w-full h-full object-cover" alt="Secret" />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-1">
                         <Lock size={24} className="text-[#d4af37]" />
-                        <span className="text-white/50 text-xs">A photo revealed only on tap</span>
+                        <span className="text-white/60 text-xs">A photo revealed only on tap</span>
+                        <span className="text-[#d4af37]/70 text-[11px] font-mono">Max 10MB</span>
                       </div>
                     )}
                     <input type="file" accept="image/*" hidden onChange={handleSecretImageUpload} />
@@ -1807,7 +1877,8 @@ function CreateCelebrationContent() {
                 <p className="text-white/50 text-sm">Optional. Up to 6 photos in a premium grid.</p>
                 <label className={`block w-full p-8 border-2 border-dashed rounded-xl transition-colors ${formData.galleryPhotos.length >= 6 ? 'opacity-50 cursor-not-allowed border-white/20' : 'border-[#d4af37]/40 cursor-pointer hover:bg-[#d4af37]/10'}`}>
                   <Upload className="mx-auto text-[#d4af37] mb-2" />
-                  <span className="text-white/70">Upload Photos ({formData.galleryPhotos.length}/6)</span>
+                  <span className="text-white/70 block">Upload Photos ({formData.galleryPhotos.length}/6)</span>
+                  <span className="text-[#d4af37]/70 text-xs font-mono block mt-1">Max 10MB per photo • Max 25MB total batch</span>
                   <input type="file" multiple accept="image/*" hidden onChange={handleGalleryUpload} disabled={formData.galleryPhotos.length >= 6} />
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -1828,7 +1899,7 @@ function CreateCelebrationContent() {
                   <label className="flex items-center justify-center gap-3 w-full p-4 border border-dashed border-white/30 rounded-xl cursor-pointer hover:bg-white/5 transition-colors">
                     <Music className="text-[#d4af37]" size={18} />
                     <span className="text-white/70 text-sm">
-                      {formData.music ? 'Music Audio File Added ✓' : 'Add Background Audio File (optional)'}
+                      {formData.music ? 'Music Audio File Added ✓' : 'Add Background Audio File (Max 15MB)'}
                     </span>
                     <input type="file" accept="audio/*" hidden onChange={(e) => handleFileUpload(e, 'MUSIC')} />
                   </label>
@@ -2219,7 +2290,7 @@ function CreateCelebrationContent() {
                           <path d="M4.5 8L7 10.5L11.5 6" stroke="#4ade80" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </>
-                    ) : "Upload Song File (MP3)"}
+                    ) : "Upload Song File (MP3, Max 15MB)"}
                   </span>
                   <input type="file" accept="audio/*" hidden onChange={(e) => handleFileUpload(e, 'MUSIC')} />
                 </label>
@@ -2286,7 +2357,8 @@ function CreateCelebrationContent() {
                 <div className="space-y-3">
                   <label className={`block w-full p-8 border-2 border-dashed rounded-xl transition-colors ${formData.photos.length >= 5 ? 'opacity-50 cursor-not-allowed border-white/20' : 'border-[#d4af37]/40 cursor-pointer hover:bg-[#d4af37]/10'}`}>
                     <Upload className="mx-auto text-[#d4af37] mb-2" />
-                    <span className="text-white/70">Upload Photos ({formData.photos.length}/5)</span>
+                    <span className="text-white/70 block">Upload Photos ({formData.photos.length}/5)</span>
+                    <span className="text-[#d4af37]/70 text-xs font-mono block mt-1">Max 10MB per photo • Max 25MB total batch</span>
                     <input
                       type="file"
                       multiple
