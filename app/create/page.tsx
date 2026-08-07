@@ -1210,11 +1210,10 @@ function CreateCelebrationContent() {
   };
 
   // ── UPLOAD SIZE VALIDATION CONSTANTS ──────────────────────────────────────────
-  // Chosen to optimize GCS Free Tier quota, prevent serverless body size payload
-  // timeouts, and guarantee smooth high-speed uploads on mobile networks.
-  const MAX_SINGLE_IMAGE_SIZE_MB = 10;    // 10 MB limit per individual photo
-  const MAX_SINGLE_AUDIO_SIZE_MB = 15;    // 15 MB limit for background music track
-  const MAX_COMBINED_UPLOAD_SIZE_MB = 25;  // 25 MB total combined media upload payload
+  // Optimized per user specs: 5MB per HD image, 4MB per 30-sec audio track, 15MB combined.
+  const MAX_SINGLE_IMAGE_SIZE_MB = 5;     // 5 MB limit per individual photo
+  const MAX_SINGLE_AUDIO_SIZE_MB = 4;     // 4 MB limit for background music track
+  const MAX_COMBINED_UPLOAD_SIZE_MB = 15;  // 15 MB total combined media upload payload
 
   /**
    * Validates individual and combined upload file sizes BEFORE upload processing begins.
@@ -1767,7 +1766,7 @@ function CreateCelebrationContent() {
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                       <Camera size={40} className="text-[#d4af37]" />
                       <span className="text-white/60 text-sm font-medium">Tap to upload hero photo</span>
-                      <span className="text-[#d4af37]/70 text-xs font-mono">Max 10MB (JPG, PNG, WEBP)</span>
+                      <span className="text-[#d4af37]/70 text-xs font-mono">Max 5MB (JPG, PNG, WEBP)</span>
                     </div>
                   )}
                   <input type="file" accept="image/*" hidden onChange={handleHeroUpload} />
@@ -1861,7 +1860,7 @@ function CreateCelebrationContent() {
                       <div className="w-full h-full flex flex-col items-center justify-center gap-1">
                         <Lock size={24} className="text-[#d4af37]" />
                         <span className="text-white/60 text-xs">A photo revealed only on tap</span>
-                        <span className="text-[#d4af37]/70 text-[11px] font-mono">Max 10MB</span>
+                        <span className="text-[#d4af37]/70 text-[11px] font-mono">Max 5MB</span>
                       </div>
                     )}
                     <input type="file" accept="image/*" hidden onChange={handleSecretImageUpload} />
@@ -1878,7 +1877,7 @@ function CreateCelebrationContent() {
                 <label className={`block w-full p-8 border-2 border-dashed rounded-xl transition-colors ${formData.galleryPhotos.length >= 6 ? 'opacity-50 cursor-not-allowed border-white/20' : 'border-[#d4af37]/40 cursor-pointer hover:bg-[#d4af37]/10'}`}>
                   <Upload className="mx-auto text-[#d4af37] mb-2" />
                   <span className="text-white/70 block">Upload Photos ({formData.galleryPhotos.length}/6)</span>
-                  <span className="text-[#d4af37]/70 text-xs font-mono block mt-1">Max 10MB per photo • Max 25MB total batch</span>
+                  <span className="text-[#d4af37]/70 text-xs font-mono block mt-1">Max 5MB per photo • Max 15MB total batch</span>
                   <input type="file" multiple accept="image/*" hidden onChange={handleGalleryUpload} disabled={formData.galleryPhotos.length >= 6} />
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -1899,7 +1898,7 @@ function CreateCelebrationContent() {
                   <label className="flex items-center justify-center gap-3 w-full p-4 border border-dashed border-white/30 rounded-xl cursor-pointer hover:bg-white/5 transition-colors">
                     <Music className="text-[#d4af37]" size={18} />
                     <span className="text-white/70 text-sm">
-                      {formData.music ? 'Music Audio File Added ✓' : 'Add Background Audio File (Max 15MB)'}
+                      {formData.music ? 'Music Audio File Added ✓' : 'Add Background Audio File (Max 4MB)'}
                     </span>
                     <input type="file" accept="audio/*" hidden onChange={(e) => handleFileUpload(e, 'MUSIC')} />
                   </label>
@@ -2064,10 +2063,10 @@ function CreateCelebrationContent() {
                   <>
                     {formData.specialSubcategory === 'JYANTI' && (
                       <>
-                        {renderInput("Jayanti Name (e.g., Gandhi Jayanti)", formData.occasionName, 'occasionName')}
-                        {renderInput("Date (e.g., 2 October)", formData.occasionDate, 'occasionDate')}
+                        {renderInput("e.g. Gandhi Jayanti or Ambedkar Jayanti", formData.occasionName, 'occasionName')}
+                        {renderInput("e.g. 2nd October 2024", formData.occasionDate, 'occasionDate')}
                         <div className="flex gap-3">
-                          {renderInput("Your Name (Creator)", formData.creatorName, 'creatorName')}
+                          {renderInput("e.g. Amit", formData.creatorName, 'creatorName')}
                           <label className="w-14 h-[58px] flex-shrink-0 bg-[#2A0A0A]/40 border border-[#d4af37]/30 rounded-xl flex items-center justify-center cursor-pointer hover:bg-[#d4af37]/10 transition-colors overflow-hidden">
                             {formData.creatorPhoto ? <img src={formData.creatorPhoto} className="w-full h-full object-cover" alt="" /> : <Camera size={20} className="text-[#d4af37]" />}
                             <input type="file" accept="image/*" hidden onChange={(e) => handleFileUpload(e, 'CREATOR')} />
@@ -2078,10 +2077,10 @@ function CreateCelebrationContent() {
 
                     {formData.specialSubcategory === 'DIVAS' && (
                       <>
-                        {renderInput("Day Name (e.g., World Environment Day)", formData.occasionName, 'occasionName')}
-                        {renderInput("Date (e.g., 5 June)", formData.occasionDate, 'occasionDate')}
+                        {renderInput("e.g. World Environment Day", formData.occasionName, 'occasionName')}
+                        {renderInput("e.g. 5th June 2024", formData.occasionDate, 'occasionDate')}
                         <div className="flex gap-3">
-                          {renderInput("Your Name (Creator)", formData.creatorName, 'creatorName')}
+                          {renderInput("e.g. Amit", formData.creatorName, 'creatorName')}
                           <label className="w-14 h-[58px] flex-shrink-0 bg-[#2A0A0A]/40 border border-[#d4af37]/30 rounded-xl flex items-center justify-center cursor-pointer hover:bg-[#d4af37]/10 transition-colors overflow-hidden">
                             {formData.creatorPhoto ? <img src={formData.creatorPhoto} className="w-full h-full object-cover" alt="" /> : <Camera size={20} className="text-[#d4af37]" />}
                             <input type="file" accept="image/*" hidden onChange={(e) => handleFileUpload(e, 'CREATOR')} />
@@ -2092,10 +2091,10 @@ function CreateCelebrationContent() {
 
                     {formData.specialSubcategory === 'FESTIVALS' && (
                       <>
-                        {renderInput("Festival Name (e.g., Diwali)", formData.occasionName, 'occasionName')}
-                        {renderInput("Date (e.g., 12 November)", formData.occasionDate, 'occasionDate')}
+                        {renderInput("e.g. Diwali, Eid, or Holi", formData.occasionName, 'occasionName')}
+                        {renderInput("e.g. 12th November 2024", formData.occasionDate, 'occasionDate')}
                         <div className="flex gap-3">
-                          {renderInput("Your Name (Creator)", formData.creatorName, 'creatorName')}
+                          {renderInput("e.g. Amit", formData.creatorName, 'creatorName')}
                           <label className="w-14 h-[58px] flex-shrink-0 bg-[#2A0A0A]/40 border border-[#d4af37]/30 rounded-xl flex items-center justify-center cursor-pointer hover:bg-[#d4af37]/10 transition-colors overflow-hidden">
                             {formData.creatorPhoto ? <img src={formData.creatorPhoto} className="w-full h-full object-cover" alt="" /> : <Camera size={20} className="text-[#d4af37]" />}
                             <input type="file" accept="image/*" hidden onChange={(e) => handleFileUpload(e, 'CREATOR')} />
@@ -2106,13 +2105,13 @@ function CreateCelebrationContent() {
 
                     {formData.specialSubcategory === 'NEW_MEMBERS' && (
                       <>
-                        {renderInput("Date (e.g., 15 March 2024)", formData.occasionDate, 'occasionDate')}
-                        {renderInput("Time (e.g., 10:30 AM)", formData.occasionTime, 'occasionTime')}
-                        {renderInput("Father's Name", formData.fatherName, 'fatherName')}
-                        {renderInput("Mother's Name", formData.motherName, 'motherName')}
+                        {renderInput("e.g. 15th March 2024", formData.occasionDate, 'occasionDate')}
+                        {renderInput("e.g. 10:30 AM", formData.occasionTime, 'occasionTime')}
+                        {renderInput("e.g. Rajesh", formData.fatherName, 'fatherName')}
+                        {renderInput("e.g. Sunita", formData.motherName, 'motherName')}
                         {!formData.isForSelf && (
                           <div className="flex gap-3">
-                            {renderInput("Your Name (Creator)", formData.creatorName, 'creatorName')}
+                            {renderInput("e.g. Amit", formData.creatorName, 'creatorName')}
                             <label className="w-14 h-[58px] flex-shrink-0 bg-[#2A0A0A]/40 border border-[#d4af37]/30 rounded-xl flex items-center justify-center cursor-pointer hover:bg-[#d4af37]/10 transition-colors overflow-hidden">
                               {formData.creatorPhoto ? <img src={formData.creatorPhoto} className="w-full h-full object-cover" alt="" /> : <Camera size={20} className="text-[#d4af37]" />}
                               <input type="file" accept="image/*" hidden onChange={(e) => handleFileUpload(e, 'CREATOR')} />
@@ -2124,12 +2123,12 @@ function CreateCelebrationContent() {
 
                     {formData.specialSubcategory === 'MARRIAGE_DATE_FIX' && (
                       <>
-                        {renderInput("Bride/Groom Name", formData.name1, 'name1')}
-                        {renderInput("Groom/Bride Name", formData.name2, 'name2')}
-                        {renderInput("Wedding Date (e.g., 20 December 2024)", formData.occasionDate, 'occasionDate')}
+                        {renderInput("e.g. Ananya", formData.name1, 'name1')}
+                        {renderInput("e.g. Rohan", formData.name2, 'name2')}
+                        {renderInput("e.g. 20th December 2024", formData.occasionDate, 'occasionDate')}
                         {!formData.isForSelf && (
                           <div className="flex gap-3">
-                            {renderInput("Your Name (Creator)", formData.creatorName, 'creatorName')}
+                            {renderInput("e.g. Amit", formData.creatorName, 'creatorName')}
                             <label className="w-14 h-[58px] flex-shrink-0 bg-[#2A0A0A]/40 border border-[#d4af37]/30 rounded-xl flex items-center justify-center cursor-pointer hover:bg-[#d4af37]/10 transition-colors overflow-hidden">
                               {formData.creatorPhoto ? <img src={formData.creatorPhoto} className="w-full h-full object-cover" alt="" /> : <Camera size={20} className="text-[#d4af37]" />}
                               <input type="file" accept="image/*" hidden onChange={(e) => handleFileUpload(e, 'CREATOR')} />
@@ -2143,9 +2142,9 @@ function CreateCelebrationContent() {
 
                 {(formData.category === 'MARRIAGE' || formData.category === 'RELATIONSHIP') && (
                   <>
-                    {renderInput(formData.isForSelf ? "Partner's Name" : "Couple Name", formData.names, 'names')}
-                    {renderInput("Years? (e.g. 5)", formData.count, 'count', 'number')}
-                    {!formData.isForSelf && renderInput("Your Relation (e.g. Bhaiya & Bhabhi)", formData.relationLabel, 'relationLabel')}
+                    {renderInput(formData.isForSelf ? "e.g. Ananya" : "e.g. Rahul & Ananya", formData.names, 'names')}
+                    {renderInput("e.g. 5 (Number of years)", formData.count, 'count', 'number')}
+                    {!formData.isForSelf && renderInput("e.g. Younger Brother, Friend, Sister", formData.relationLabel, 'relationLabel')}
 
                     {showWhoAreYou && (
                       <div className="pt-4 border-t border-white/10">
@@ -2218,9 +2217,9 @@ function CreateCelebrationContent() {
 
                 {formData.category === 'BIRTHDAY' && (
                   <>
-                    {renderInput("Birthday Person Name", formData.names, 'names')}
-                    {renderInput("Which Birthday? (e.g. 20)", formData.count, 'count', 'number')}
-                    {!formData.isForSelf && renderInput("Your Relation", formData.relationLabel, 'relationLabel')}
+                    {renderInput("e.g. Aarav", formData.names, 'names')}
+                    {renderInput("e.g. 25 (Turned age)", formData.count, 'count', 'number')}
+                    {!formData.isForSelf && renderInput("e.g. Best Friend, Brother, Sister", formData.relationLabel, 'relationLabel')}
                   </>
                 )}
 
@@ -2229,7 +2228,7 @@ function CreateCelebrationContent() {
                   <div className="pt-4 border-t border-white/10 space-y-3">
                     <p className="text-[#d4af37] text-xs uppercase tracking-widest text-center mb-2">Creator Details</p>
                     <div className="flex gap-3">
-                      {renderInput("Your Name", formData.creatorName, 'creatorName')}
+                      {renderInput("e.g. Rohit", formData.creatorName, 'creatorName')}
                       <label className="w-14 h-[58px] flex-shrink-0 bg-[#2A0A0A]/40 border border-[#d4af37]/30 rounded-xl flex items-center justify-center cursor-pointer hover:bg-[#d4af37]/10 transition-colors overflow-hidden">
                         {formData.creatorPhoto ? <img src={formData.creatorPhoto} className="w-full h-full object-cover" alt="" /> : <Camera size={20} className="text-[#d4af37]" />}
                         <input type="file" accept="image/*" hidden onChange={(e) => handleFileUpload(e, 'CREATOR')} />
@@ -2241,7 +2240,7 @@ function CreateCelebrationContent() {
                 {/* Recovery Email */}
                 <div className="pt-4 border-t border-white/10 space-y-3">
                   <p className="text-[#d4af37] text-xs uppercase tracking-widest text-center mb-1">Story Recovery</p>
-                  {renderInput("Your Email (for recovery & link)", formData.email || '', 'email', 'email')}
+                  {renderInput("e.g. rahul@gmail.com", formData.email || '', 'email', 'email')}
                 </div>
 
                 {/* Leaderboard Privacy */}
@@ -2290,7 +2289,7 @@ function CreateCelebrationContent() {
                           <path d="M4.5 8L7 10.5L11.5 6" stroke="#4ade80" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </>
-                    ) : "Upload Song File (MP3, Max 15MB)"}
+                    ) : "Upload Song File (MP3, Max 4MB)"}
                   </span>
                   <input type="file" accept="audio/*" hidden onChange={(e) => handleFileUpload(e, 'MUSIC')} />
                 </label>
@@ -2358,7 +2357,7 @@ function CreateCelebrationContent() {
                   <label className={`block w-full p-8 border-2 border-dashed rounded-xl transition-colors ${formData.photos.length >= 5 ? 'opacity-50 cursor-not-allowed border-white/20' : 'border-[#d4af37]/40 cursor-pointer hover:bg-[#d4af37]/10'}`}>
                     <Upload className="mx-auto text-[#d4af37] mb-2" />
                     <span className="text-white/70 block">Upload Photos ({formData.photos.length}/5)</span>
-                    <span className="text-[#d4af37]/70 text-xs font-mono block mt-1">Max 10MB per photo • Max 25MB total batch</span>
+                    <span className="text-[#d4af37]/70 text-xs font-mono block mt-1">Max 5MB per photo • Max 15MB total batch</span>
                     <input
                       type="file"
                       multiple
