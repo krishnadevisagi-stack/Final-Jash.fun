@@ -1750,7 +1750,7 @@ function CreateCelebrationContent() {
               <motion.div key="step16" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full space-y-5 text-center">
                 <h2 className="text-2xl font-serif text-[#d4af37]">Who is this for?</h2>
                 <p className="text-white/50 text-sm">This becomes the headline on your landing page hero.</p>
-                {renderInput('e.g., Priya & Rahul, or Happy Birthday Aryan', formData.names, 'names')}
+                {renderInput('e.g. Aman & Komal (or Happy Birthday Aman)', formData.names, 'names')}
               </motion.div>
             )}
 
@@ -2123,8 +2123,8 @@ function CreateCelebrationContent() {
 
                     {formData.specialSubcategory === 'MARRIAGE_DATE_FIX' && (
                       <>
-                        {renderInput("e.g. Ananya", formData.name1, 'name1')}
-                        {renderInput("e.g. Rohan", formData.name2, 'name2')}
+                        {renderInput("e.g. Aman", formData.name1, 'name1')}
+                        {renderInput("e.g. Komal", formData.name2, 'name2')}
                         {renderInput("e.g. 20th December 2024", formData.occasionDate, 'occasionDate')}
                         {!formData.isForSelf && (
                           <div className="flex gap-3">
@@ -2142,7 +2142,7 @@ function CreateCelebrationContent() {
 
                 {(formData.category === 'MARRIAGE' || formData.category === 'RELATIONSHIP') && (
                   <>
-                    {renderInput(formData.isForSelf ? "e.g. Ananya" : "e.g. Rahul & Ananya", formData.names, 'names')}
+                    {renderInput("e.g. Aman & Komal", formData.names, 'names')}
                     {renderInput("e.g. 5 (Number of years)", formData.count, 'count', 'number')}
                     {!formData.isForSelf && renderInput("e.g. Younger Brother, Friend, Sister", formData.relationLabel, 'relationLabel')}
 
