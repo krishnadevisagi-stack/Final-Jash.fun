@@ -42,7 +42,7 @@ export default function BlogsPage() {
           {BLOG_POSTS.map(post => (
             <article
               key={post.slug}
-              className="bg-[#2A0A0A]/40 border border-[#d4af37]/20 rounded-2xl p-6 flex flex-col justify-between hover:border-[#d4af37]/60 hover:bg-[#2A0A0A]/70 transition-all duration-300 shadow-lg group"
+              className="bg-[#3D1010]/40 backdrop-blur-sm border border-[#d4af37]/20 rounded-2xl p-6 flex flex-col justify-between hover:border-[#d4af37]/50 hover:bg-[#3D1010]/60 transition-all duration-300 shadow-lg group"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs text-white/50 font-sans">
@@ -80,25 +80,26 @@ export default function BlogsPage() {
         </div>
 
         {/* Bottom Callout */}
-        <div className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-[#2A0A0A] via-[#3D1010] to-[#2A0A0A] border border-[#d4af37]/30 text-center space-y-4 shadow-xl">
+        <div className="mt-12 p-8 rounded-2xl bg-[#3D1010]/40 backdrop-blur-sm border border-[#d4af37]/30 text-center space-y-4 shadow-xl">
           <h3 className="text-xl font-bold text-[#d4af37]">Ready to create your own celebration story?</h3>
           <p className="text-white/70 text-xs max-w-md mx-auto leading-relaxed font-sans">
             Build interactive birthday pages, romantic anniversary stories, or milestone pages in under 2 minutes.
           </p>
           <Link
-            href="/create"
+            href="/"
             className="inline-block px-6 py-3 bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#2A0A0A] font-extrabold text-sm rounded-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all"
           >
             Create Celebration Website Now
           </Link>
         </div>
 
-        {/* Footer Links */}
-        <div className="pt-8 border-t border-white/10 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-center text-[11px] text-white/40 font-sans">
-          <Link href="/privacy" className="hover:text-[#d4af37] transition-colors">Privacy Policy</Link>
-          <Link href="/terms" className="hover:text-[#d4af37] transition-colors">Terms &amp; Conditions</Link>
-          <Link href="/about" className="hover:text-[#d4af37] transition-colors">About Us</Link>
-          <Link href="/leaderboard" className="hover:text-[#d4af37] transition-colors">Leaderboard</Link>
+        {/* Footer Links matching Home Page */}
+        <div className="w-full max-w-xl flex flex-wrap justify-center items-center gap-x-4 gap-y-2 pt-6 text-center mx-auto">
+          <Link href="/privacy" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Privacy Policy</Link>
+          <Link href="/terms" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Terms &amp; Conditions</Link>
+          <Link href="/about" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">About Us &amp; Contact Us</Link>
+          <Link href="/leaderboard" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Leaderboard</Link>
+          <Link href="/blogs" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Blogs</Link>
         </div>
 
         </div>

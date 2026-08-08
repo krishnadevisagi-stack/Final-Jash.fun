@@ -108,15 +108,20 @@ export default function BlogPostDetail({ params }: Props) {
               <ArrowLeft size={16} /> Explore All Blogs
             </Link>
             <Link
-              href="/create"
+              href="/"
               className="px-5 py-2.5 bg-[#d4af37] text-[#1A0505] font-extrabold text-xs rounded-xl hover:scale-105 transition-transform"
             >
               Create Website
             </Link>
           </div>
 
-          <div className="text-center text-[11px] text-white/30 font-sans pt-4 border-t border-white/5">
-            Published on Jashn.fun • All Rights Reserved
+          {/* Footer Links matching Home Page */}
+          <div className="w-full max-w-xl flex flex-wrap justify-center items-center gap-x-4 gap-y-2 pt-6 text-center mx-auto border-t border-white/10">
+            <Link href="/privacy" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Terms &amp; Conditions</Link>
+            <Link href="/about" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">About Us &amp; Contact Us</Link>
+            <Link href="/leaderboard" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Leaderboard</Link>
+            <Link href="/blogs" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Blogs</Link>
           </div>
         </footer>
 
