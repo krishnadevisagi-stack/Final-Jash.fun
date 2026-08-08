@@ -7,8 +7,9 @@ import { ArrowLeft, BookOpen, Clock, Calendar, ChevronRight, Sparkles } from 'lu
 
 export default function BlogsPage() {
   return (
-    <main className="min-h-screen bg-[#1A0505] text-white py-12 px-4 sm:px-6 lg:px-8 font-serif selection:bg-[#d4af37]/30 selection:text-[#d4af37]">
-      <div className="max-w-4xl mx-auto space-y-10">
+    <main className="fixed inset-0 w-full h-[100dvh] overflow-y-auto no-scrollbar bg-[#1A0505] text-white font-serif selection:bg-[#d4af37]/30 selection:text-[#d4af37]">
+      <div className="min-h-full flex flex-col items-center py-10 px-4 sm:px-6 lg:px-8 pb-32 relative z-10">
+        <div className="w-full max-w-4xl space-y-10">
         
         {/* Header Navigation */}
         <div className="flex items-center justify-between border-b border-white/10 pb-6">
@@ -100,6 +101,7 @@ export default function BlogsPage() {
           <Link href="/leaderboard" className="hover:text-[#d4af37] transition-colors">Leaderboard</Link>
         </div>
 
+        </div>
       </div>
     </main>
   );
