@@ -99,13 +99,12 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="w-full max-w-md flex flex-wrap justify-center items-center gap-x-4 gap-y-2 pt-4 text-center">
+        <div className="w-full max-w-xl flex flex-wrap justify-center items-center gap-x-4 gap-y-2 pt-4 text-center">
           <Link href="/privacy" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Privacy Policy</Link>
           <Link href="/terms" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Terms &amp; Conditions</Link>
           <Link href="/about" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">About Us &amp; Contact Us</Link>
-          <Link href="/leaderboard" className="text-white/30 hover:text-[#d4af37] transition-all duration-300" title="Leaderboard">
-            <Trophy size={14} className="text-white/30 hover:text-[#d4af37] transition-colors" />
-          </Link>
+          <Link href="/leaderboard" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Leaderboard</Link>
+          <Link href="/blogs" className="text-[10px] text-white/30 uppercase tracking-widest hover:text-[#d4af37] transition-colors">Blogs</Link>
         </div>
 
       </div>
