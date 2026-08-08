@@ -2689,7 +2689,7 @@ export default function FreeStoryMode() {
           The celebration story link you opened might be invalid or expired.
         </p>
         <button
-          onClick={() => router.push('/create')}
+          onClick={() => router.push('/')}
           className="px-6 py-3 bg-[#d4af37] text-[#1A0505] font-bold rounded-full shadow-lg hover:scale-105 transition-transform"
         >
           Create a New Celebration Website
